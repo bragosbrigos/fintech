@@ -1,0 +1,101 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fintech-services
+  namespace: fintech-staging
+  labels:
+    app: fintech-platform
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 30s
+  namespaceSelector:
+    matchNames:
+      - fintech-staging
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: fintech-alerts
+  namespace: fintech-staging
+  labels:
+    app: fintech-platform
+spec:
+  groups:
+    - name: fintech.rules
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(http_server_requests_seconds_count{status=~"5..",job="auth-service"}[5m])) 
+            / sum(rate(http_server_requests_seconds_count{job="auth-service"}[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate detected"
+            description: "Error rate is above 5% for auth-service"
+        
+        - alert: HighResponseTime
+          expr: |
+            histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job="auth-service"}[5m])) by (le)) > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High response time detected"
+            description: "95th percentile response time is above 2 seconds"
+        
+        - alert: PodCrashLooping
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="fintech-staging"}[1h]) > 3
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod is crash looping"
+            description: "Pod {{ $labels.pod }} has restarted more than 3 times in the last hour"
+        
+        - alert: LowDiskSpace
+          expr: |
+            kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes < 0.1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Low disk space"
+            description: "Disk space is below 10% on {{ $labels.persistentvolumeclaim }}"
+        
+        - alert: HighMemoryUsage
+          expr: |
+            container_memory_usage_bytes{namespace="fintech-staging"} 
+            / container_spec_memory_limit_bytes{namespace="fintech-staging"} > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage"
+            description: "Memory usage is above 85% for {{ $labels.container }}"
+        
+        - alert: DatabaseConnectionPoolExhausted
+          expr: |
+            hikaricp_active_connections / hikaricp_max_connections > 0.9
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database connection pool nearly exhausted"
+            description: "Connection pool usage is above 90%"
+        
+        - alert: KafkaConsumerLag
+          expr: |
+            kafka_consumer_lag > 1000
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High Kafka consumer lag"
+            description: "Consumer lag is above 1000 messages"

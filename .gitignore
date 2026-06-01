@@ -1,35 +1,51 @@
 ```
-# Java/Maven
+# Compiled and build artifacts
 *.class
-*.jar
-*.war
-*.ear
-*.zip
-target/
-!target/README
+*.o
+*.obj
+*.out
+*.dll
+*.so
+*.a
+*.pyc
+__pycache__/
+
 # Dependencies
-lib/
-!lib/README
-# IDE
-.classpath
-.project
-.settings/
-.idea/
-*.iws
-*.iml
-*.ipr
-# OS
-.DS_Store
-Thumbs.db
-# Logs
+node_modules/
+venv/
+.venv/
+target/
+.gradle/
+.mypy_cache/
+.pytest_cache/
+.julia/
+zig*/
+
+# Logs and temp files
 *.log
+*.tmp
+*.swp
+*.swo
+
 # Environment
 .env
 .env.local
-.env.*
-# Build systems
-.gradle/
-!gradle.properties
-!gradlew
-!gradlew.bat
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Build artifacts
+dist/
+build/
 ```
