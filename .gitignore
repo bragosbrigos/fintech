@@ -18,9 +18,8 @@ target/
 .gradle/
 .mypy_cache/
 .pytest_cache/
-coverage/
-htmlcov/
-.coverage
+.julia/
+zig*/
 
 # Logs and temp files
 *.log
@@ -41,7 +40,12 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Build and distribution
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Build artifacts
 dist/
 build/
 ```
