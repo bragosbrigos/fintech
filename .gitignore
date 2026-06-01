@@ -1,51 +1,35 @@
 ```
-# Java/Maven specific
-target/
+# Java/Maven
 *.class
 *.jar
 *.war
 *.ear
-.m2/
-
+*.zip
+target/
+!target/README
 # Dependencies
-node_modules/
-venv/
-.venv/
-__pycache__/
-*.egg-info/
-dist/
-build/
-
+lib/
+!lib/README
 # IDE
-.vscode/
+.classpath
+.project
+.settings/
 .idea/
-*.swp
-*.swo
-
-# System
+*.iws
+*.iml
+*.ipr
+# OS
 .DS_Store
 Thumbs.db
-
 # Logs
 *.log
-
 # Environment
 .env
 .env.local
-*.env.*
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Gradle
+.env.*
+# Build systems
 .gradle/
-build/
-
-# MyPy
-.mypy_cache/
-
-# PyTest
-.pytest_cache/
+!gradle.properties
+!gradlew
+!gradlew.bat
 ```
